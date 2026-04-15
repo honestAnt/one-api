@@ -7,6 +7,7 @@ import (
 	"github.com/songquanpeng/one-api/relay/adaptor/anthropic"
 	"github.com/songquanpeng/one-api/relay/adaptor/aws"
 	"github.com/songquanpeng/one-api/relay/adaptor/baidu"
+	"github.com/songquanpeng/one-api/relay/adaptor/claude"
 	"github.com/songquanpeng/one-api/relay/adaptor/cloudflare"
 	"github.com/songquanpeng/one-api/relay/adaptor/cohere"
 	"github.com/songquanpeng/one-api/relay/adaptor/coze"
@@ -64,6 +65,8 @@ func GetAdaptor(apiType int) adaptor.Adaptor {
 		return &proxy.Adaptor{}
 	case apitype.Replicate:
 		return &replicate.Adaptor{}
+	case apitype.ClaudeMessages:
+		return &claude.Adaptor{}
 	}
 	return nil
 }

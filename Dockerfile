@@ -4,7 +4,7 @@ WORKDIR /web
 COPY ./VERSION .
 COPY ./web .
 
-RUN npm install --prefix /web/default & \
+RUN npm config set registry https://registry.npmmirror.com && npm install --prefix /web/default & \
     npm install --prefix /web/berry & \
     npm install --prefix /web/air & \
     wait
@@ -16,11 +16,14 @@ RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run buil
 
 FROM golang:alpine AS builder2
 
-RUN apk add --no-cache \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && apk add --no-cache \
     gcc \
     musl-dev \
     sqlite-dev \
     build-base
+
+ENV GOPROXY=https://goproxy.cn,direct
+ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
 
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
@@ -38,7 +41,7 @@ RUN go build -trimpath -ldflags "-s -w -X 'github.com/songquanpeng/one-api/commo
 
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates tzdata
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && apk add --no-cache ca-certificates tzdata
 
 COPY --from=builder2 /build/one-api /
 
