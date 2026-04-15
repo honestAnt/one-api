@@ -31,6 +31,10 @@ func (a *Adaptor) Init(meta *meta.Meta) {
 }
 
 func (a *Adaptor) GetRequestURL(meta *meta.Meta) (string, error) {
+	//如果meta.BaseURL 包含 /chat/completions，则直接返回
+	if strings.Contains(meta.BaseURL, "/chat/completions") {
+		return meta.BaseURL, nil
+	}
 	switch meta.ChannelType {
 	case channeltype.Azure:
 		if meta.Mode == relaymode.ImagesGenerations {
